@@ -1,2 +1,7 @@
 # Karigor CLI
-Run `karigor make:controller Name` and `karigor migrate` in your Python projects.
+
+A Laravel Artisan inspired CLI for Python.
+
+## Installation
+```bash
+pip install karigor
