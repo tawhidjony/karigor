@@ -1,0 +1,18 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "karigor"
+version = "1.0.0"  # (Semantic Versioning)
+description = "Automated Feature-Driven Backend for 100+ Developers"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+    { name = "Tawhid Jony", email = "tawhid.jony.jhm@gmail.com" }
+]
+dependencies = [
+    "fastapi>=0.110.0",
+    "uvicorn>=0.28.0",
+    "sqlalchemy>=2.0.0"
+]

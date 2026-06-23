@@ -1,0 +1,7 @@
+__pycache__/
+*.py[cod]
+.karigorvenv/
+venv/
+dist/
+build/
+*.egg-info/
