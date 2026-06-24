@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v1.0.4 (2026-06-24)
+
+### Bug Fixes
+
+- Add fetch-tags option in checkout step of publish workflow
+  ([`527e927`](https://github.com/tawhidjony/karigor/commit/527e927618029911b68fa53b4d35b8c8270b6777))
+
+
 ## v1.0.3 (2026-06-24)
 
 ### Bug Fixes

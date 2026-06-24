@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "karigor"
-version = "1.0.3" # গিটহাব এটি অটোমেটিক বাড়িয়ে ১.০.৪ বা পরবর্তী সঠিক ভার্সন করবে
-description = "Laravel Artisan inspired CLI for Python - Automated Feature-Driven Backend Builder"
+version = "1.0.4"
+description = ""
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [
@@ -26,6 +26,8 @@ dependencies = [
 karigor = "karigor.main:app"
 
 # To automatically include the templates folder when packaging
+
+
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["karigor*"]
