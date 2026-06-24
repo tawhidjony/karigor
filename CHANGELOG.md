@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v1.1.0 (2026-06-24)
+
+### Features
+
+- Merge dev branch changes and release version
+  ([`1f68c85`](https://github.com/tawhidjony/karigor/commit/1f68c851e7bab1baa2417d584a6595caaf6137bc))
+
+
 ## v1.0.6 (2026-06-24)
 
 ### Bug Fixes
