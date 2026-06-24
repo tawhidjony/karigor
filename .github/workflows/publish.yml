@@ -29,7 +29,7 @@ jobs:
       - name: Configure Git
         run: |
           git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.email "github-actions[bot]@://github.com"
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -41,15 +41,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install build python-semantic-release
 
-      # ধাপ ১: ড্রাই-রান করে দেখা যে নতুন কোনো রিলিজ হওয়ার মতো কমিট আছে কিনা
+      # ধাপ ১: গিট কমিট দেখে ড্রাই-রান করা (কোনো --patch নেই, এটি স্বয়ংক্রিয়ভাবে ট্র্যাক করবে)
       - name: Check if release is needed
         id: check_release
         run: |
-          # ড্রাই-রান রান করে আউটপুট একটি ফাইলে সেভ করুন
           semantic-release --strict --noop version > release_output.txt 2>&1
           cat release_output.txt
           
-          # আউটপুটে যদি "No release" বা "No change" লেখা থাকে তবে রিলিজ স্কিপ হবে
           if grep -q -E "No release|No change|no version change" release_output.txt; then
             echo "released=false" >> $GITHUB_OUTPUT
           else
@@ -58,20 +56,29 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # ধাপ ২: গিট কমিটের ওপর ভিত্তি করে লোকাল ফাইলগুলোর ভার্সন নম্বর স্বয়ংক্রিয়ভাবে আপডেট করা
+      - name: Update Version Files Locally
+        if: steps.check_release.outputs.released == 'true'
+        run: |
+          # এটি কমিট মেসেজ অনুযায়ী pyproject.toml-এ নতুন ভার্সন (যেমন ১.১.০) রাইট করবে
+          semantic-release --strict version --no-changelog --no-git-commit-hooks --no-tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # ধাপ ২: শুধুমাত্র ডেপ্লয়মেন্ট নিশ্চিত হলেই প্যাকেজ বিল্ড করা
+      # ধাপ ৩: এখন নতুন ও সঠিক ভার্সন নম্বর দিয়ে প্যাকেজ ডিস্ট্রিবিউশন বিল্ড করা
       - name: Build package distribution
         if: steps.check_release.outputs.released == 'true'
         run: python -m build
 
-      # 🌟 ধাপ ৩: প্রথমে PyPI-তে সফলভাবে আপলোড/ডেপ্লয় করা
+      # 🌟 ধাপ ৪: PyPI-তে নতুন ফাইলটি সফলভাবে আপলোড করা (কোনো ডুপ্লিকেট ফাইল এরর আসবে না)
       - name: Publish package distributions to PyPI
         if: steps.check_release.outputs.released == 'true'
         uses: pypa/gh-action-pypi-publish@release/v1
 
-      # 🌟 ধাপ ৪: PyPI-তে ডেপ্লয় সফল হওয়ার পর কেবল ট্যাগ এবং Changelog তৈরি করা
-      - name: Python Semantic Release (Tag & Changelog Creation)
+      # ধাপ ৫: PyPI-তে আপলোড সফল হওয়ার পর গিটহাবে Changelog, Commit এবং Tag পুশ করা
+      - name: Python Semantic Release (Tag & Changelog Push)
         if: steps.check_release.outputs.released == 'true'
-        uses: python-semantic-release/python-semantic-release@v9
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          semantic-release --strict version --no-vcs-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
