@@ -24,6 +24,7 @@ jobs:
         uses: actions/checkout@v5
         with:
           fetch-depth: 0 
+          fetch-tags: true
 
       # অ্যাকশনস বটের মাধ্যমে চেঞ্জলগ এবং ভার্সন আপডেট গিটহাবে পুশ করার কনফিগারেশন
       - name: Configure Git
