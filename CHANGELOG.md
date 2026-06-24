@@ -1,12 +1,26 @@
 # CHANGELOG
 
 
+## v1.0.5 (2026-06-24)
+
+### Bug Fixes
+
+- Disable semantic release build command to fix module missing error
+  ([`3712495`](https://github.com/tawhidjony/karigor/commit/3712495cbdf781d244743ed2d0d20dab3d8af648))
+
+- Update version to 1.0.4 and add changelog entry for fetch-tags option
+  ([`999973b`](https://github.com/tawhidjony/karigor/commit/999973bf86dc0621f2d64f6dcf74e7ef7694af40))
+
+
 ## v1.0.4 (2026-06-24)
 
 ### Bug Fixes
 
 - Add fetch-tags option in checkout step of publish workflow
   ([`527e927`](https://github.com/tawhidjony/karigor/commit/527e927618029911b68fa53b4d35b8c8270b6777))
+
+- Resolve semantic release build command and metadata configuration
+  ([`f49a753`](https://github.com/tawhidjony/karigor/commit/f49a7532a155b81270af8f9c746a9b073355dfb8))
 
 
 ## v1.0.3 (2026-06-24)
