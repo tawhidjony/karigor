@@ -5,8 +5,8 @@
 
 ### Bug Fixes
 
-- Sync base version to 1.0.4 and reset pipeline
-  ([`14d3bba`](https://github.com/tawhidjony/karigor/commit/14d3bbae31209a33799268910227646602c01a86))
+- Force semantic release to increment version bump from 1.0.4
+  ([`67bb1e6`](https://github.com/tawhidjony/karigor/commit/67bb1e6feed01b33be8791cc384d613ea7b16ed6))
 
 
 ## v1.0.4 (2026-06-24)
@@ -21,6 +21,9 @@
 
 - Resolve semantic release build command and metadata configuration
   ([`f49a753`](https://github.com/tawhidjony/karigor/commit/f49a7532a155b81270af8f9c746a9b073355dfb8))
+
+- Sync base version to 1.0.4 and reset pipeline
+  ([`14d3bba`](https://github.com/tawhidjony/karigor/commit/14d3bbae31209a33799268910227646602c01a86))
 
 - Sync with remote and set base version to 1.0.2
   ([`6d07676`](https://github.com/tawhidjony/karigor/commit/6d0767630c811737869c78d4425632b161bbce65))
