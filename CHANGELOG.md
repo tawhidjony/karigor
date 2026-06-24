@@ -1,6 +1,24 @@
 # CHANGELOG
 
 
+## v1.0.6 (2026-06-24)
+
+### Bug Fixes
+
+- Enhance README with detailed features, quick commands, and installation instructions
+  ([`12f535f`](https://github.com/tawhidjony/karigor/commit/12f535f963168bc194cf776807ad9b9a10c31268))
+
+### Documentation
+
+- Update README with detailed features, usage instructions, and project structure
+  ([`7b8dd12`](https://github.com/tawhidjony/karigor/commit/7b8dd12afb9253fdcb67a15c966ab37a11641be0))
+
+### Refactoring
+
+- Remove unused files and update import paths for migration and alembic templates
+  ([`9e9ddac`](https://github.com/tawhidjony/karigor/commit/9e9ddac5d4bdd8502555fdcb39ea746db51b8d70))
+
+
 ## v1.0.5 (2026-06-24)
 
 ### Bug Fixes
