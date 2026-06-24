@@ -45,11 +45,15 @@ jobs:
       - name: Check if release is needed
         id: check_release
         run: |
-          # --strict এবং --noop অবশ্যই version কমান্ডের আগে বসাতে হবে
-          if semantic-release --strict --noop version; then
-            echo "released=true" >> $GITHUB_OUTPUT
-          else
+          # ড্রাই-রান রান করে আউটপুট একটি ফাইলে সেভ করুন
+          semantic-release --strict --noop version > release_output.txt 2>&1
+          cat release_output.txt
+          
+          # আউটপুটে যদি "No release" বা "No change" লেখা থাকে তবে রিলিজ স্কিপ হবে
+          if grep -q -E "No release|No change|no version change" release_output.txt; then
             echo "released=false" >> $GITHUB_OUTPUT
+          else
+            echo "released=true" >> $GITHUB_OUTPUT
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
