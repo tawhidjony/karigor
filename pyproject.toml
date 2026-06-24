@@ -5,13 +5,13 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "karigor"
 version = "1.0.2"
-description = "Laravel Artisan inspired CLI for Python - Automated Feature-Driven Backend Builder"
+description = ""
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [
     { name = "Tawhid Jony", email = "tawhid.jony.jhm@gmail.com" }
 ]
-# These dependencies are required to run your CLI tool.
+# These dependencies are required to run your CLI tool
 dependencies = [
     "typer[all]>=0.9.0",
     "rich>=13.0.0",
@@ -24,7 +24,7 @@ dependencies = [
 [project.scripts]
 karigor = "karigor.main:app"
 
-# To automatically include the templates folder when packaging::
+# To automatically include the templates folder when packaging
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["karigor*"]
