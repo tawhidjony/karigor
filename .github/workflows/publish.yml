@@ -1,0 +1,38 @@
+name: Semantic Release & PyPI Publish
+
+on:
+  push:
+    branches:
+      - main 
+
+jobs:
+  release:
+    name: Semantic Release & Publish
+    runs-on: ubuntu-latest
+    concurrency: release
+
+    environment:
+      name: pypi
+      url: https://pypi.org 
+
+    permissions:
+      id-token: write 
+      contents: write 
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 
+
+      # অ্যাকশনস বটের মাধ্যমে চেঞ্জলগ এবং ভার্সন আপডেট গিটহাবে পুশ করার কনফিগারেশন
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@://github.com"
+
+      # এই স্টেপটি অটোমেটিক ভার্সন বাড়াবে, CHANGELOG.md তৈরি করবে এবং PyPI-তে পাবলিশ করবে
+      - name: Python Semantic Release
+        uses: python-semantic-release/python-semantic-release@v9
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}

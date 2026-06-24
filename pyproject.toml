@@ -11,7 +11,7 @@ requires-python = ">=3.10"
 authors = [
     { name = "Tawhid Jony", email = "tawhid.jony.jhm@gmail.com" }
 ]
-# আপনার CLI টুলটি চালানোর জন্য এই ডিপেন্ডেন্সিগুলো বাধ্যতামূলক
+# These dependencies are required to run your CLI tool.
 dependencies = [
     "typer[all]>=0.9.0",
     "rich>=13.0.0",
@@ -20,11 +20,25 @@ dependencies = [
     "sqlalchemy>=2.0.0"
 ]
 
-# লারাভেল আর্টিসানের মতো গ্লোবাল কমান্ড লাইন ইন্টারফেস সচল করার জন্য:
+# To enable the global command line interface
 [project.scripts]
 karigor = "karigor.main:app"
 
-# প্যাকেজিং করার সময় templates ফোল্ডার স্বয়ংক্রিয়ভাবে ইনক্লুড করার জন্য:
+# To automatically include the templates folder when packaging::
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["karigor*"]
+
+# semantic_release 
+[tool.semantic_release]
+version_toml = [
+    "pyproject.toml:project.version"
+]
+branch = "main" 
+upload_to_pypi = true
+upload_to_release = true
+
+# Add the following to auto-generate the changelog file
+[tool.semantic_release.changelog]
+changelog_file = "CHANGELOG.md" # যে ফাইলে তালিকাটি তৈরি হবে
+exclude_commit_patterns = []
