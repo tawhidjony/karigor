@@ -4,13 +4,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "karigor"
-version = "1.0.3"
-description = ""
+version = "1.0.3" # গিটহাব এটি অটোমেটিক বাড়িয়ে ১.০.৪ বা পরবর্তী সঠিক ভার্সন করবে
+description = "Laravel Artisan inspired CLI for Python - Automated Feature-Driven Backend Builder"
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [
     { name = "Tawhid Jony", email = "tawhid.jony.jhm@gmail.com" }
 ]
+
 # These dependencies are required to run your CLI tool
 dependencies = [
     "typer[all]>=0.9.0",
@@ -25,21 +26,25 @@ dependencies = [
 karigor = "karigor.main:app"
 
 # To automatically include the templates folder when packaging
-
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["karigor*"]
 
-# semantic_release 
+# ==========================================
+# python-semantic-release (PSR v9) Configuration
+# ==========================================
 [tool.semantic_release]
 version_toml = [
     "pyproject.toml:project.version"
 ]
 branch = "main" 
-upload_to_pypi = true
+upload_to_pypi = false     # গিটহাবের ডেডিকেটেড জব এটি হ্যান্ডেল করবে বলে এটি false থাকবে
 upload_to_release = true
+
+# 🌟 ফিক্স: সিমেন্টিক রিলিজকে অটোমেটিক বিল্ড ডিস্ট্রিবিউশন ফাইল তৈরি করার নির্দেশ
+build_command = "python -m build"
 
 # Add the following to auto-generate the changelog file
 [tool.semantic_release.changelog]
-changelog_file = "CHANGELOG.md" # যে ফাইলে তালিকাটি তৈরি হবে
+changelog_file = "CHANGELOG.md" 
 exclude_commit_patterns = []

@@ -3,37 +3,69 @@ name: Semantic Release & PyPI Publish
 on:
   push:
     branches:
-      - main 
+      - main
 
 jobs:
   release:
-    name: Semantic Release & Publish
+    name: Semantic Release
     runs-on: ubuntu-latest
     concurrency: release
-
-    environment:
-      name: pypi
-      url: https://pypi.org 
-
+    outputs:
+      released: ${{ steps.semantic.outputs.released }} # ভার্সন রিলিজ হয়েছে কিনা তা ট্র্যাক করার জন্য
     permissions:
-      id-token: write 
-      contents: write 
+      contents: write # গিটহাবে চেঞ্জলগ পুশ এবং ট্যাগ তৈরির জন্য
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
         with:
-          fetch-depth: 0 
+          fetch-depth: 0
           fetch-tags: true
 
-      # অ্যাকশনস বটের মাধ্যমে চেঞ্জলগ এবং ভার্সন আপডেট গিটহাবে পুশ করার কনফিগারেশন
       - name: Configure Git
         run: |
           git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@://github.com"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      # এই স্টেপটি অটোমেটিক ভার্সন বাড়াবে, CHANGELOG.md তৈরি করবে এবং PyPI-তে পাবলিশ করবে
       - name: Python Semantic Release
+        id: semantic
         uses: python-semantic-release/python-semantic-release@v9
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+
+  publish:
+    name: Publish to PyPI
+    needs: release
+    # শুধুমাত্র নতুন কোনো রিলিজ/ভার্সন তৈরি হলেই কেবল এটি রান করবে
+    if: needs.release.outputs.released == 'true'
+    runs-on: ubuntu-latest
+    
+    environment:
+      name: pypi
+      url: https://pypi.org
+
+    permissions:
+      id-token: write # PyPI Trusted Publishing OIDC এর জন্য এটি বাধ্যতামূলক
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install build
+
+      - name: Build package distribution
+        run: python -m build
+
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
