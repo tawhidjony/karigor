@@ -3,16 +3,20 @@ name: Semantic Release & PyPI Publish
 on:
   push:
     branches:
-      - main
+      - main # শুধুমাত্র প্রধান ব্রাঞ্চে পুশ হলেই এটি চেক করবে
 
 jobs:
-  release:
-    name: Semantic Release
+  check-and-publish:
+    name: Build, Secure Publish & Release
     runs-on: ubuntu-latest
     concurrency: release
-    outputs:
-      released: ${{ steps.semantic.outputs.released }} # ভার্সন রিলিজ হয়েছে কিনা তা ট্র্যাক করার জন্য
+    
+    environment:
+      name: pypi
+      url: https://pypi.org
+
     permissions:
+      id-token: write # PyPI Trusted Publishing OIDC এর জন্য এটি বাধ্যতামূলক
       contents: write # গিটহাবে চেঞ্জলগ পুশ এবং ট্যাগ তৈরির জন্য
 
     steps:
@@ -27,33 +31,6 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Python Semantic Release
-        id: semantic
-        uses: python-semantic-release/python-semantic-release@v9
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-
-  publish:
-    name: Publish to PyPI
-    needs: release
-    # শুধুমাত্র নতুন কোনো রিলিজ/ভার্সন তৈরি হলেই কেবল এটি রান করবে
-    if: needs.release.outputs.released == 'true'
-    runs-on: ubuntu-latest
-    
-    environment:
-      name: pypi
-      url: https://pypi.org
-
-    permissions:
-      id-token: write # PyPI Trusted Publishing OIDC এর জন্য এটি বাধ্যতামূলক
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          fetch-tags: true
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -62,10 +39,33 @@ jobs:
       - name: Install build dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install build
+          pip install build python-semantic-release
 
+      # ধাপ ১: ড্রাই-রান করে দেখা যে নতুন কোনো রিলিজ হওয়ার মতো কমিট আছে কিনা
+      - name: Check if release is needed
+        id: check_release
+        run: |
+          if semantic-release --strict dry; then
+            echo "released=true" >> $GITHUB_OUTPUT
+          else
+            echo "released=false" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # ধাপ ২: শুধুমাত্র ডেপ্লয়মেন্ট নিশ্চিত হলেই প্যাকেজ বিল্ড করা
       - name: Build package distribution
+        if: steps.check_release.outputs.released == 'true'
         run: python -m build
 
+      # 🌟 ধাপ ৩: প্রথমে PyPI-তে সফলভাবে আপলোড/ডেপ্লয় করা
       - name: Publish package distributions to PyPI
+        if: steps.check_release.outputs.released == 'true'
         uses: pypa/gh-action-pypi-publish@release/v1
+
+      # 🌟 ধাপ ৪: PyPI-তে ডেপ্লয় সফল হওয়ার পর কেবল ট্যাগ এবং Changelog তৈরি করা
+      - name: Python Semantic Release (Tag & Changelog Creation)
+        if: steps.check_release.outputs.released == 'true'
+        uses: python-semantic-release/python-semantic-release@v9
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
