@@ -1,7 +1,21 @@
 # CHANGELOG
 
 
-## v0.1.0 (2026-06-24)
+## v1.0.3 (2026-06-24)
+
+### Bug Fixes
+
+- Sync with remote and set base version to 1.0.2
+  ([`6d07676`](https://github.com/tawhidjony/karigor/commit/6d0767630c811737869c78d4425632b161bbce65))
+
+- Update checkout action to v5 in publish workflow
+  ([`9190d78`](https://github.com/tawhidjony/karigor/commit/9190d787855df0a1119556aa7cb915b71c71ec6e))
+
+- Updated base version to 1.0.2 and update license
+  ([`63e947a`](https://github.com/tawhidjony/karigor/commit/63e947aa0ab93f300a8c4cd4f0fd4ae503c6a01a))
+
+
+## v1.0.2 (2026-06-24)
 
 ### Bug Fixes
 
