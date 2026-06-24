@@ -74,7 +74,7 @@ class {class_name}(Base):
     # Check 2: Register inside base.py avoiding duplicate imports
     # -------------------------------------------------------------------------
     base_file_path = f"{migrations_dir}/base.py"
-    import_line = f"from migrations.{file_base_name} import {class_name}\n"
+    import_line = f"from database.migrations.{file_base_name} import {class_name}\n"
     
     if not os.path.exists(base_file_path):
         with open(base_file_path, "w") as base_file:
