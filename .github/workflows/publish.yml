@@ -1,4 +1,4 @@
-name: Semantic Release & PyPI Publish
+name: Karigor Release & PyPI Publish
 
 on:
   push:
@@ -54,7 +54,7 @@ jobs:
             echo "released=true" >> $GITHUB_OUTPUT
           fi
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # 🌟 ধাপ ২: লোকাল ফাইলের (pyproject.toml) ভার্সন নম্বর নতুন ভার্সনে আপডেট করা
       - name: Update Version Files Locally
@@ -62,7 +62,7 @@ jobs:
         run: |
           semantic-release --strict version --no-changelog --no-commit --no-tag
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # 🌟 ধাপ ৩: নতুন ও সঠিক ভার্সন নম্বর দিয়ে পাইথন প্যাকেজ (.whl এবং sdist) বিল্ড করা
       - name: Build package distribution
@@ -81,4 +81,4 @@ jobs:
           # এরর এড়াতে ভুল অপশনটি সরিয়ে শুধু রিলিজের মূল কমান্ডটি দেওয়া হয়েছে
           semantic-release --strict version
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
