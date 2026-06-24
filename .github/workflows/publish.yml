@@ -29,7 +29,7 @@ jobs:
       - name: Configure Git
         run: |
           git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@://github.com"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -41,7 +41,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install build python-semantic-release
 
-      # ধাপ ১: গিট কমিট দেখে ড্রাই-রান করা (কোনো --patch নেই, এটি স্বয়ংক্রিয়ভাবে ট্র্যাক করবে)
+      # ধাপ ১: গিট কমিট দেখে ড্রাই-রান করা
       - name: Check if release is needed
         id: check_release
         run: |
@@ -56,30 +56,29 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-           # ধাপ ২: গিট কমিটের ওপর ভিত্তি করে লোকাল ফাইলগুলোর ভার্সন নম্বর স্বয়ংক্রিয়ভাবে আপডেট করা
+      # 🌟 ধাপ ২: লোকাল ফাইলের (pyproject.toml) ভার্সন নম্বর নতুন ভার্সনে আপডেট করা
       - name: Update Version Files Locally
         if: steps.check_release.outputs.released == 'true'
         run: |
-          # --no-git-commit-hooks এর পরিবর্তে --no-commit ব্যবহার করা হয়েছে
           semantic-release --strict version --no-changelog --no-commit --no-tag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # ধাপ ৩: এখন নতুন ও সঠিক ভার্সন নম্বর দিয়ে প্যাকেজ ডিস্ট্রিবিউশন বিল্ড করা
+      # 🌟 ধাপ ৩: নতুন ও সঠিক ভার্সন নম্বর দিয়ে পাইথন প্যাকেজ (.whl এবং sdist) বিল্ড করা
       - name: Build package distribution
         if: steps.check_release.outputs.released == 'true'
         run: python -m build
 
-      # ধাপ ৪: PyPI-তে নতুন ফাইলটি সফলভাবে আপলোড করা
+      # 🌟 ধাপ ৪: PyPI-তে নতুন ফাইলটি সফলভাবে আপলোড করা
       - name: Publish package distributions to PyPI
         if: steps.check_release.outputs.released == 'true'
         uses: pypa/gh-action-pypi-publish@release/v1
 
-      # ধাপ ৫: PyPI-তে আপলোড সফল হওয়ার পর গিটহাবে Changelog, Commit এবং Tag পুশ করা
+      # 🌟 ধাপ ৫: PyPI-তে আপলোড সফল হওয়ার পর গিটহাবে ফাইনাল Changelog, Commit এবং Tag পুশ করা
       - name: Python Semantic Release (Tag & Changelog Push)
         if: steps.check_release.outputs.released == 'true'
         run: |
-          # রিলিজের ফাইনাল কমিট এবং ট্যাগ পুশ করার জন্য
-          semantic-release --strict version --no-vcs-release
+          # এরর এড়াতে ভুল অপশনটি সরিয়ে শুধু রিলিজের মূল কমান্ডটি দেওয়া হয়েছে
+          semantic-release --strict version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
