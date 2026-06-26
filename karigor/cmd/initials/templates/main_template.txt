@@ -1,14 +1,19 @@
-import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from src.config.settings import settings
+from src.routes.api import v1_router as api_routes
+
+
 app = FastAPI(
-    title="Karigor Enterprise API",
-    description="Automated Feature-Driven Backend for 100+ Developers",
-    version="1.0.0"
+    title=settings.PROJECT_NAME,
+    version="1.0.0",
+    openapi_url=f"{settings.API_V1_STR}/openapi.json",
+    docs_url="/docs",
+    redoc_url="/redoc"
 )
 
-# CORS Middleware Configuration
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -17,9 +22,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/health", tags=["System"])
-async def health_check():
-    return {"status": "healthy", "engine": "Karigor CLI"}
+app.include_router(api_routes, prefix=settings.API_V1_STR)
+
+
+@app.get("/", tags=["Root"])
+def read_root():
+    return {"message": "Welcome to FastAPI"}
 
 def main():
     print("🚀 Starting Karigor App via Uvicorn...")

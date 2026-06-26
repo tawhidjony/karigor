@@ -9,12 +9,8 @@ def init_cmd(console):
 
     folders = [
         "app", 
-        "app/controllers", 
-        "app/models", 
         "routes", 
         "config", 
-        "database/migrations", 
-        "database/seed"
     ]
     for folder in folders:
         os.makedirs(folder, exist_ok=True)

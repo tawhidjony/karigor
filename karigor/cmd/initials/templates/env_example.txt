@@ -1,3 +1,14 @@
 PROJECT_NAME="karigor"
-SECRET_KEY="my_super_secret_secure_key_for_jwt_tokens"
-DATABASE_URL="postgresql://postgres:password@localhost:5433/karigor_db"
+API_V1_STR="/api/v1"
+
+# Database Configuration
+POSTGRES_SERVER=localhost
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=password
+POSTGRES_DB=karigor_test
+POSTGRES_PORT=5433
+
+# JWT Security
+JWT_SECRET_KEY=super_secret_key_change_me_in_production_1234567890
+JWT_ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30

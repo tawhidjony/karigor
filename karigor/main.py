@@ -1,75 +1,95 @@
 import os
 import subprocess
 import typer
+import datetime
+from typing import Optional
 from rich.console import Console
 
 from karigor.cmd.initials.init_cmd import init_cmd
 from karigor.cmd.migration.migration_create import migration_create
 from karigor.cmd.install_db.install_db import install_db
 
+app = typer.Typer(
+    no_args_is_help=True,
+    help="Karigor CLI - A Laravel Artisan inspired CLI for Python.",
+)
 
-app = typer.Typer(help="Karigor CLI - A Laravel Artisan inspired CLI for Python.")
 console = Console()
+error_console = Console(stderr=True) 
 
 # -------------------------------------------------------------------------
 # ১. karigor init
 # -------------------------------------------------------------------------
-@app.command()
+@app.command(name="init", rich_help_panel="FastApi")
 def init():
     init_cmd(console)
+
+
 # -------------------------------------------------------------------------
 # ২. karigor serve
 # -------------------------------------------------------------------------
-@app.command()
+@app.command(name="serve", rich_help_panel="FastApi")
 def serve():
     """Run the project targeting main.py"""
     if os.path.exists("main.py"):
         console.print("[bold blue]🚀 Starting application via Karigor...[/bold blue]")
         subprocess.run(["python", "main.py"])
     else:
-        console.print("[bold red]❌ Error:[/bold red] main.py not found! Run 'karigor init' first.", err=True)
+        console.print(
+            "[bold red]❌ Error:[/bold red] main.py not found! Run 'karigor init' first.",
+            err=True,
+        )
+
 
 # -------------------------------------------------------------------------
-# ৩. karigor create:migration
+# ৪. karigor alembic:install (ইন্টারেক্টিভ ড্রাইভার সিলেকশন সহ)
 # -------------------------------------------------------------------------
-# -------------------------------------------------------------------------
-# ৩. karigor create:migration
-# -------------------------------------------------------------------------
-@app.command(name="create:migration")
-def create_migration(name: str):
-    migration_create(name, console)
-# -------------------------------------------------------------------------
-# ৪. karigor db:install
-# -------------------------------------------------------------------------
-# -------------------------------------------------------------------------
-# ৪. karigor db:install (ইন্টারেক্টিভ ড্রাইভার সিলেকশন সহ)
-# --------------------------------------------------------------`-----------
-# -------------------------------------------------------------------------
-# ৪. karigor db:install (ইন্টারেক্টিভ ড্রাইভার সিলেকশন সহ)
-# -------------------------------------------------------------------------
-@app.command(name="db:install")
+@app.command(name="alembic:install", rich_help_panel="Alembic")
 def db_install():
-   install_db()
+    """Install Alembic and setup the configuration without any hassle."""
+    install_db()
+
+
 # -------------------------------------------------------------------------
 # ৫. karigor migrate
 # -------------------------------------------------------------------------
-@app.command()
-def migrate(message: str = typer.Argument(..., help="Migration message/name")):
-    """Run alembic revision autogenerate and upgrade head"""
+@app.command(name="alembic:migrate", rich_help_panel="Alembic")
+def migrate(
+      message: Optional[str] = typer.Argument(
+        None, help="Migration message/name (Leave empty to auto-generate timestamp)"
+    ),
+):
+    """Run alembic revision autogenerate and upgrade head (message: optional)"""
     if not os.path.exists("alembic"):
-        console.print("[bold red]❌ Error:[/bold red] Alembic is not initialized. Please run [yellow]'karigor db:install'[/yellow] first.", err=True)
+        console.print(
+            "[bold red]❌ Error:[/bold red] Alembic is not initialized. Please run [yellow]'karigor alembic:install'[/yellow] first.",
+            err=True,
+        )
         return
-
+    if not message:
+        message = f"migration_{datetime.datetime.now().strftime('%Y_%m_%d_%H%M%S')}"
     try:
         console.print(f"[bold blue]⏳ Generating migration: '{message}'...[/bold blue]")
-        subprocess.run(["alembic", "revision", "--autogenerate", "-m", message], check=True)
-        
+        subprocess.run(
+            ["alembic", "revision", "--autogenerate", "-m", message], check=True
+        )
+
         console.print("[bold blue]⏳ Running migration upgrade head...[/bold blue]")
         subprocess.run(["alembic", "upgrade", "head"], check=True)
-        
+
         console.print("[bold green]✔[/bold green] Migration completed successfully!")
     except subprocess.CalledProcessError as e:
-        console.print(f"[bold red]❌ Migration failed:[/bold red] {e}", err=True)
+        error_console.print(f"[bold red]❌ Migration failed:[/bold red] {e}", err=True)
+
+
+# -------------------------------------------------------------------------
+# ৩. karigor create:migration
+# -------------------------------------------------------------------------
+@app.command(name="alembic:create", rich_help_panel="Alembic")
+def create_migration(name: str):
+    """Create your migration model (exemple: demo_2026_06_24_150713_table.py)"""
+    migration_create(name, console)
+
 
 # -------------------------------------------------------------------------
 # ৬ & ৭. karigor create:model & create:controller
@@ -79,27 +99,29 @@ def create_model(path: str):
     """Create a new Model file (e.g., User/User.py)"""
     _create_file_from_template(path, "Model")
 
+
 @app.command(name="create:controller")
 def create_controller(path: str):
     """Create a new Controller file (e.g., User/User.py)"""
     _create_file_from_template(path, "Controller")
 
+
 def _create_file_from_template(path: str, file_type: str):
     # Standardize path (remove leading slash if present)
     clean_path = path.lstrip("/")
-    
+
     # Base directory and filename
     dir_name = os.path.dirname(clean_path)
     file_name = os.path.basename(clean_path)
-    
+
     if dir_name:
         os.makedirs(dir_name, exist_ok=True)
-        
+
     full_path = os.path.join(dir_name, file_name) if dir_name else file_name
-    
+
     # Class name dynamic generation (e.g., User.py -> User)
     class_name = os.path.splitext(file_name)[0].capitalize()
-    
+
     content = f"""# {file_type} generated by Karigor CLI
 class {class_name}{file_type}:
     def __init__(self):
@@ -107,8 +129,11 @@ class {class_name}{file_type}:
 """
     with open(full_path, "w") as f:
         f.write(content)
-        
-    console.print(f"[bold green]✔[/bold green] {file_type} created successfully at: [yellow]{full_path}[/yellow]")
+
+    console.print(
+        f"[bold green]✔[/bold green] {file_type} created successfully at: [yellow]{full_path}[/yellow]"
+    )
+
 
 if __name__ == "__main__":
     app()
