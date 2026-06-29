@@ -11,6 +11,7 @@ def init_cmd(console):
         "app", 
         "routes", 
         "config", 
+        "database/migrations", 
     ]
     for folder in folders:
         os.makedirs(folder, exist_ok=True)
@@ -33,8 +34,9 @@ def init_cmd(console):
             console.print(f"[bold red]❌ Error: Template file '{template_name}' not found at {template_path}![/bold red]")
     
     write_from_template("migrations_base.txt", "database/migrations/base.py")
-    write_from_template("env_setting_template.txt", "config/env_setting.py")
+    write_from_template("env_setting_template.txt", "config/settings.py")
     write_from_template("meta_data_template.txt", "config/meta_data.py")
+    write_from_template("route_api.txt", "routes/api.py")
     write_from_template("env_example.txt", ".env.example")
     write_from_template("main_template.txt", "main.py")
     write_from_template("env_example.txt", ".env")

@@ -1,0 +1,33 @@
+from sqlalchemy.orm import Session
+from app.modules.{{module_name}}.{{module_name}}_model import {{class_name}}
+from app.modules.{{module_name}}.{{module_name}}_schema import {{ class_name }}Create
+
+class {{class_name}}Repository:
+    def __init__(self, db: Session):
+        self.db = db
+
+    def create(self, {{module_name}}_in: {{ class_name }}Create) -> {{class_name}}:
+        db_{{module_name}} = {{class_name}}(
+            example={{module_name}}_in.example,
+        )
+        self.db.add(db_{{module_name}})
+        self.db.commit()
+        self.db.refresh(db_{{module_name}})
+        return db_{{module_name}}
+
+    def get_all(self, skip: int = 0, limit: int = 100):
+        return self.db.query({{class_name}}).offset(skip).limit(limit).all()
+    
+    def get_by_id(self, {{module_name}}_id: int) -> {{class_name}} | None:
+        return self.db.query({{class_name}}).filter({{class_name}}.id == {{module_name}}_id).first()
+
+    def update(self, {{module_name}}: {{class_name}}, update_data: dict) -> {{class_name}}:
+        for key, value in update_data.items():
+            setattr({{module_name}}, key, value)
+        self.db.commit()
+        self.db.refresh({{module_name}})
+        return {{module_name}}
+
+    def delete(self, {{module_name}}: {{class_name}}) -> None:
+        self.db.delete({{module_name}})
+        self.db.commit()

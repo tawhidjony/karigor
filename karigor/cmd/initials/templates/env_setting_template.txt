@@ -3,7 +3,7 @@ from pydantic import computed_field
 
 class Settings(BaseSettings):
     PROJECT_NAME: str
-    API_V1_STR: str
+    API_PREFIX: str
     
     POSTGRES_SERVER: str
     POSTGRES_USER: str

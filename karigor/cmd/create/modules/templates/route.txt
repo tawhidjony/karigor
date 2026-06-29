@@ -1,0 +1,47 @@
+from fastapi import APIRouter, Depends, status
+from sqlalchemy.orm import Session
+from typing import List
+
+from config.meta_data import get_db
+
+from app.modules.{{ module_name }}.{{ module_name }}_schema import {{ class_name }}Create, {{ class_name }}Response, {{ class_name }}Update
+from app.modules.{{ module_name }}.{{ module_name }}_service import {{ class_name }}Service
+
+router = APIRouter(prefix="/{{ table_name }}", tags=["{{ module_names }}"])
+
+@router.post("/", response_model={{ class_name }}Response, status_code=status.HTTP_201_CREATED)
+def create_{{module_name}}(
+    {{module_name}}_in: {{class_name}}Create, 
+    db: Session = Depends(get_db)
+):
+    {{module_name}}_service = {{class_name}}Service(db)
+    return {{module_name}}_service.create_new_{{module_name}}({{module_name}}_in)
+
+@router.get("/", response_model=List[{{ class_name }}Response])
+def get_{{module_name}}s(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    {{module_name}}_service = {{class_name}}Service(db)
+    return {{module_name}}_service.list_{{module_name}}s(skip=skip, limit=limit)
+
+
+@router.get("/{{{module_name}}_id}", response_model={{ class_name }}Response)
+def get_single_{{module_name}}({{module_name}}_id: int, db: Session = Depends(get_db)):
+    {{module_name}}_service = {{class_name}}Service(db)
+    return {{module_name}}_service.get_{{module_name}}_by_id({{module_name}}_id)
+
+
+@router.put("/{{{module_name}}_id}", response_model={{ class_name }}Response)
+def update_{{module_name}}(
+    {{module_name}}_id: int, 
+    update_in: {{class_name}}Update, 
+    db: Session = Depends(get_db)
+):
+    {{module_name}}_service = {{class_name}}Service(db)
+    return {{module_name}}_service.update_{{module_name}}({{module_name}}_id, update_in)
+
+@router.delete("/{{{module_name}}_id}", status_code=status.HTTP_200_OK)
+def delete_{{module_name}}(
+    {{module_name}}_id: int, 
+    db: Session = Depends(get_db)
+):
+    {{module_name}}_service = {{class_name}}Service(db)
+    return {{module_name}}_service.delete_{{module_name}}({{module_name}}_id)
