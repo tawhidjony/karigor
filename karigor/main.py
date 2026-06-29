@@ -6,11 +6,11 @@ from typing import Optional
 from rich.console import Console
 
 from karigor.cmd.initials.init_cmd import init_cmd
-from karigor.cmd.migration.migration_create import migration_create
 from karigor.cmd.install_db.install_db import install_db
+from karigor.helper.path_helper import write_from_template
+from karigor.cmd.migration.migration_create import migration_create
 from karigor.cmd.create.modules.modules_create import modules_create
 
-from karigor.helper.path_helper import write_from_template
 
 
 app = typer.Typer(
@@ -128,7 +128,7 @@ def create_model(path: str):
     }
 
     write_from_template('create/modules/templates/models.txt', f'app/modules/{path}/{path}_model.py', context=variables)
-    register_route_in_api_file(module_name, class_name)
+  
 
 @app.command(name="create:repository", rich_help_panel="Create")
 def create_repository(path: str):
@@ -144,12 +144,12 @@ def create_repository(path: str):
     write_from_template('create/modules/templates/repository.txt', f'app/modules/{path}/{path}_repository.py', context=variables)
 
 @app.command(name="create:route", rich_help_panel="Create")
-def create_model(path: str):
+def create_route(path: str):
     """Create a new route file (e.g., example/example.py)"""
     write_from_template('create/modules/templates/route.txt', f'app/modules/{path}/{path}_route.py')
 
 @app.command(name="create:schema", rich_help_panel="Create")
-def create_model(path: str):
+def create_schema(path: str):
     """Create a new schemas file (e.g., example/example.py)"""
     module_name = path.lower()     
     class_name = path.capitalize()  
@@ -162,7 +162,7 @@ def create_model(path: str):
     write_from_template('create/modules/templates/schemas.txt', f'app/modules/{path}/{path}_schema.py',context=variables)
 
 @app.command(name="create:services", rich_help_panel="Create")
-def create_model(path: str):
+def create_services(path: str):
     """Create a new services file (e.g., example/example.py)"""
     write_from_template('create/modules/templates/services.txt', f'app/modules/{path}/{path}_services.py')
 

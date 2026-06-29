@@ -1,6 +1,7 @@
 
 from karigor.helper.path_helper import  write_from_template
 from karigor.helper.register_route import register_route_in_api_file
+from karigor.helper.append_migration import append_model_to_migrations
 def modules_create(path: str):
 
     module_name = path.lower()     
@@ -20,3 +21,4 @@ def modules_create(path: str):
     write_from_template('create/modules/templates/services.txt', f'app/modules/{path}/{path}_service.py', context=variables)
 
     register_route_in_api_file(module_name, class_name)
+    append_model_to_migrations(module_name, class_name)
